@@ -1,0 +1,28 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { IProducts } from "../../types";
+
+export async function getStaticPaths() {
+  const res = await fetch("https://fakestoreapi.com/products");
+  const products = (await res.json()) as IProducts[];
+
+  return products.map((product) => ({
+    params: { id: product.id.toString() },
+    props: { product },
+  }));
+}
+
+interface Props {
+  product: IProducts;
+}
+
+const { id } = Astro.params;
+const { product } = Astro.props as Props;
+---
+
+<Layout title={`Product ${product.title}`}>
+  <div class="flex flex-col items-center justify-between gap-10">
+    <h1 class="text-lg font-bold">{product.title}</h1>
+    <img src={product.image} class="w-1/4" alt="картинка" />
+  </div>
+</Layout>
